@@ -103,3 +103,35 @@ html, body {
     width: 48%;
   }
 }
+
+@media (max-width: 480px) {
+  .header {
+    padding: 10px;
+  }
+
+  .content {
+    padding: 10px;
+  }
+
+  .camera-box {
+    padding: 10px;
+  }
+
+  .button-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .camera-button {
+    padding: 8px 16px;
+  }
+
+  .right-bar {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .right-bar-image {
+    margin-bottom: 10px;
+  }
+}
