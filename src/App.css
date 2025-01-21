@@ -144,12 +144,12 @@ html, body {
 /* Add this to scale the entire app */
 @media (max-width: 768px) {
   .App {
-    transform: scale(0.8);
+    transform: scale(calc(100vw / 768));
   }
 }
 
 @media (max-width: 480px) {
   .App {
-    transform: scale(0.6);
+    transform: scale(calc(100vw / 480));
   }
 }
