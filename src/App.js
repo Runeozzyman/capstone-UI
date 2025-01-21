@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import Webcam from 'react-webcam';
 import './App.css';
 
 function App() {
+  const webcamRef = useRef(null);
+
+  const startVideoFeed = () => {
+    if (webcamRef.current) {
+      webcamRef.current.video.play();
+    }
+  };
+
+  const stopVideoFeed = () => {
+    if (webcamRef.current) {
+      webcamRef.current.video.pause();
+    }
+  };
+
   return (
     <div className="App">
       <div className="header">
@@ -11,10 +26,15 @@ function App() {
       <div className="content">
         <div className="camera-container">
           <div className="camera-box">
-            <img src="cam.png" alt="camera" className="camera-image" />
+            <Webcam
+              audio={false}
+              ref={webcamRef}
+              screenshotFormat="image/jpeg"
+              className="camera-image"
+            />
             <div className="button-container">
-              <button className="camera-button">Start Video Feed</button>
-              <button className="camera-button">Stop</button>
+              <button className="camera-button" onClick={startVideoFeed}>Start Video Feed</button>
+              <button className="camera-button" onClick={stopVideoFeed}>Stop</button>
             </div>
           </div>
         </div>
