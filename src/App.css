@@ -14,6 +14,7 @@ html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  transform-origin: top left;
 }
 
 .header {
@@ -137,5 +138,18 @@ html, body {
 
   .right-bar-image {
     margin-bottom: 10px;
+  }
+}
+
+/* Add this to scale the entire app */
+@media (max-width: 768px) {
+  .App {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 480px) {
+  .App {
+    transform: scale(0.6);
   }
 }
