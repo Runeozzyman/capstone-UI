@@ -1,11 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700&display=swap');
+
+
+/* Global Styles */
 html, body {
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
-  
+  overflow-x: hidden;
+  font-family: Arial, sans-serif;
 }
 
+/* Main App Layout */
 .App {
   display: flex;
   flex-direction: column;
@@ -14,121 +20,190 @@ html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transform-origin: top left;
 }
 
+/* Header */
 .header {
+  font-family: 'Barlow', sans-serif;
   width: 100%;
-  padding: 20px;
   text-align: center;
-  background-color: rgba(214, 228, 189, 0.938);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #68BA7F;
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
+/* Content Layout */
 .content {
   display: flex;
   flex: 1;
-  background-color: rgb(181, 233, 188);
-  flex-direction: column;
+  background-color: #CFFFDC;
+  flex-direction: row; /* ✅ Keep elements in a row */
   align-items: center;
+  justify-content: center; /* ✅ Center everything properly */
   padding: 20px;
   width: 100%;
   box-sizing: border-box;
 }
 
+/* Camera Container */
 .camera-container {
-  flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: center; /* ✅ Ensures centering */
   align-items: center;
   width: 100%;
+  flex-grow: 1; /* ✅ Prevents it from shrinking */
 }
 
+/* Camera Box */
 .camera-box {
-  background-color: grey;
+  position: relative; /* ✅ Ensures bounding box overlays correctly */
+  background-color: #68BA7F;
   border-radius: 15px;
-  padding: 20px;
-  box-shadow: 10px 10px;
+  padding: 10px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 640px;
+  margin: auto; /* ✅ Ensures it stays centered */
 }
 
+/* Webcam */
 .camera-image {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: auto;
+  max-width: 640px;
+  max-height: 480px;
+  border-radius: 10px;
 }
 
-.button-container {
-  margin-top: 20px;
+/* Bounding Box Overlay */
+.bounding-box-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Placeholder when Camera is Off */
+.camera-placeholder {
+  width: 640px;
+  height: 480px;
   display: flex;
-  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  color: white;
+  font-size: 20px;
+  border-radius: 10px;
 }
 
+/* Camera Button Container */
+.button-container {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Camera Button */
 .camera-button {
-  padding: 10px 20px;
+  padding: 8px 16px;
   border: none;
   border-radius: 5px;
-  background-color: #4CAF50; /* Green background */
+  background-color: #4CAF50;
   color: white;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
 }
 
 .camera-button:hover {
-  background-color: #45a049; /* Darker green on hover */
+  background-color: #45a049;
 }
 
+/* Right Bar */
 .right-bar {
   width: 100%;
-  max-width: 300px;
+  max-width: 280px;
   flex-shrink: 0;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgba(214, 228, 189, 0.938);
+  border-radius: 15px;
+  background-color: rgba(60, 223, 114, 0.744);
+  padding: 15px;
+  gap: 15px;
 }
 
+.right-bar header{
+ 
+  font-family: 'Barlow', sans-serif;
+  padding: 1px;
+  background-color: #CFFFDC;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+/* Right Bar Images */
 .right-bar-image {
-  width: 100%;
-  margin-bottom: 20px;
-  object-fit: cover;
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 10px;
 }
 
+/* Debug Text */
+.debug-text {
+  color: blue;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+/* Responsive Layout */
 @media (min-width: 768px) {
   .content {
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center; /* ✅ Center everything in larger screens */
   }
 
-  .camera-container, .right-bar {
-    width: 48%;
+  .camera-container {
+    width: 50%; /* ✅ Ensures balanced layout */
+  }
+
+  .right-bar {
+    width: 30%;
   }
 }
 
 @media (max-width: 480px) {
   .header {
     padding: 10px;
+    font-size: 1.2rem;
   }
 
   .content {
-    padding: 10px;
+    flex-direction: column; /* ✅ Stack elements vertically on small screens */
+    align-items: center;
   }
 
   .camera-box {
-    padding: 10px;
+    padding: 8px;
   }
 
   .button-container {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   .camera-button {
-    padding: 8px 16px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
   }
 
   .right-bar {
@@ -137,19 +212,7 @@ html, body {
   }
 
   .right-bar-image {
-    margin-bottom: 10px;
-  }
-}
-
-/* Add this to scale the entire app */
-@media (max-width: 768px) {
-  .App {
-    transform: scale(calc(100vw / 768));
-  }
-}
-
-@media (max-width: 480px) {
-  .App {
-    transform: scale(calc(100vw / 480));
+    width: 120px;
+    height: 120px;
   }
 }

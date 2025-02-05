@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import useModel from "../hooks/useModel";
 
 const ModelComponent = () => {
-  const modelUrl = process.env.PUBLIC_URL + "/model/model.json"; // Ensure path is correct
+  const modelUrl = process.env.PUBLIC_URL + "/web_model/model.json";
   const { model, loading } = useModel(modelUrl);
   const videoRef = useRef(null);
   const [predictions, setPredictions] = useState([]);
@@ -16,7 +16,7 @@ const ModelComponent = () => {
     const predictions = await model.executeAsync(tensor);
     console.log(predictions);
 
-    setPredictions(predictions); // Store predictions for display
+    setPredictions(predictions); 
   };
 
   return (
