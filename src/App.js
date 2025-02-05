@@ -53,6 +53,7 @@ function App() {
           </div>
         </div>
 
+        {/* Right Column */}
         <div className="right-bar">
           <div>
             <header>Classifications</header>
@@ -60,6 +61,12 @@ function App() {
           <img src="garb.png" alt="garbage" className="right-bar-image" />
           <img src="recyc.png" alt="recyclable" className="right-bar-image" />
           <img src="comp.png" alt="compost" className="right-bar-image" />
+
+          {/* Stats Box BELOW classifications */}
+          <div className="statsBox">
+            <p>Detected Objects: 0</p>
+            <p>Confidence Score: 0%</p>
+          </div>
         </div>
       </div>
     </div>

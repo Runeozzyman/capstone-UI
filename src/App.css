@@ -127,6 +127,20 @@ html, body {
   background-color: #45a049;
 }
 
+.statsBox {
+  width: 100%;
+  background-color: #CFFFDC; /* Light grey background */
+  border-radius: 10px;
+  padding: 0px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #263238;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+
 /* Right Bar */
 .right-bar {
   width: 100%;
@@ -136,7 +150,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   border-radius: 15px;
-  background-color: rgba(60, 223, 114, 0.744);
+  background-color: #68BA7F;
   padding: 15px;
   gap: 15px;
 }
@@ -144,9 +158,11 @@ html, body {
 .right-bar header{
  
   font-family: 'Barlow', sans-serif;
-  padding: 1px;
+  font-size:x-large;
+  padding-right: 10px;
+  padding-left: 10px;
   background-color: #CFFFDC;
-  border-radius: 5px;
+  border-radius: 10px;
   font-weight: bold;
 }
 
