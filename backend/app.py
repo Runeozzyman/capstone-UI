@@ -5,31 +5,27 @@ import torchvision.transforms as transforms
 from PIL import Image
 import io
 import os
-from ultralytics import YOLO  # Assuming YOLO model
+from ultralytics import YOLO  
 
-# Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend communication
+CORS(app)
 
-# Load PyTorch Model (assuming it's a YOLO model)
 MODEL_PATH = "model/best_mv3.pt"
 
 if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(f"Model file not found at {MODEL_PATH}")
+    raise FileNotFoundError(f"❌ Model file not found at {MODEL_PATH}")
 
-# Load the model
 try:
-    model = YOLO(MODEL_PATH)  # If using Ultralytics YOLO
+    model = YOLO(MODEL_PATH)  
     print("✅ Model loaded successfully!")
 except Exception as e:
-    raise RuntimeError(f"Error loading model: {str(e)}")
+    raise RuntimeError(f"❌ Error loading model: {str(e)}")
 
-model.to("cpu")  # Ensure model runs on CPU
-model.eval()  # Set model to evaluation mode
+model.to("cpu")  
+model.eval()  
 
-# Define image preprocessing (Resize to 416x416)
 transform = transforms.Compose([
-    transforms.Resize((416, 416)),  # Resize input to match model expectations
+    transforms.Resize((416, 416)),  
     transforms.ToTensor(),
 ])
 
@@ -39,28 +35,32 @@ def predict():
         return jsonify({"error": "No image uploaded"}), 400
 
     file = request.files["image"]
-    img = Image.open(io.BytesIO(file.read())).convert("RGB")  # Convert to RGB
-    img_tensor = transform(img).unsqueeze(0)  # Add batch dimension
+    img = Image.open(io.BytesIO(file.read())).convert("RGB")  
+    img_tensor = transform(img).unsqueeze(0)  
 
-    with torch.no_grad():
-        results = model(img_tensor)  # Perform inference
+    with torch.no_grad():  
+        results = model(img_tensor)  
 
     detections = []
     for r in results:
-        for box in r.boxes:  # Assuming YOLO returns box objects
-            x, y, w, h = box.xywh[0].tolist()
+        for box in r.boxes:
+            x_center, y_center, w, h = box.xywh[0].tolist()
             conf = box.conf[0].item()
-            cls = int(box.cls[0].item())  # Class label
-            
+            cls = int(box.cls[0].item())
+
+            x = x_center - (w / 2)
+            y = y_center - (h / 2)
+
             detections.append({
-                "x": int(x - w / 2),  # Convert center format to top-left format
-                "y": int(y - h / 2),
-                "width": int(w),
-                "height": int(h),
-                "label": cls,
+                "x": x,  
+                "y": y,
+                "width": w,
+                "height": h,
+                "label": model.names[cls],  
                 "confidence": conf,
             })
 
+    print(f"✅ Sending {len(detections)} detections")
     return jsonify({"detections": detections})
 
 if __name__ == "__main__":

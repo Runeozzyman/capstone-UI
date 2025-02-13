@@ -190,6 +190,7 @@ html, body {
 
   .camera-container {
     width: 50%; /* ✅ Ensures balanced layout */
+    position: relative;
   }
 
   .right-bar {
@@ -230,5 +231,14 @@ html, body {
   .right-bar-image {
     width: 120px;
     height: 120px;
+  }
+
+  .bounding-box-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Prevents interfering with clicks */
   }
 }

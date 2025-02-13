@@ -12,39 +12,48 @@ function App() {
   useEffect(() => {
     if (webcamRef.current && canvasRef.current) {
       const video = webcamRef.current.video;
-      if (video) {
+      if (video && video.readyState === 4) {
+        // Fixed size to prevent shifting
         canvasRef.current.width = video.videoWidth;
         canvasRef.current.height = video.videoHeight;
       }
     }
   }, [isCameraOn]);
 
-  // Capture an image and send it to the backend
+  // Capture an image and send to the backend every 100ms
   const captureImage = useCallback(async () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      if (!imageSrc) return;
+    if (!webcamRef.current) return;
 
-      const blob = await fetch(imageSrc).then((res) => res.blob());
-      const formData = new FormData();
-      formData.append("image", blob, "capture.jpg");
+    const imageSrc = webcamRef.current.getScreenshot();
+    if (!imageSrc) return;
 
-      try {
-        const response = await axios.post("http://localhost:15000/predict", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+    const blob = await fetch(imageSrc).then((res) => res.blob());
+    const formData = new FormData();
+    formData.append("image", blob, "capture.jpg");
+
+    try {
+      const response = await axios.post("http://localhost:15000/predict", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.data.detections) {
+        console.log("✅ Detections:", response.data.detections);
         setDetections(response.data.detections);
-      } catch (error) {
-        console.error("Error sending image:", error);
+      } else {
+        setDetections([]);
       }
+    } catch (error) {
+      console.error("❌ Error sending image:", error);
     }
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (isCameraOn) captureImage();
-    }, 1000); // Capture every second
-
+    let interval;
+    if (isCameraOn) {
+      interval = setInterval(() => {
+        captureImage();
+      }, 50); // Capture every 100ms (0.1s)
+    }
     return () => clearInterval(interval);
   }, [isCameraOn, captureImage]);
 
@@ -52,25 +61,41 @@ function App() {
   const drawBoundingBoxes = useCallback(() => {
     const canvas = canvasRef.current;
     const video = webcamRef.current?.video;
-    if (!canvas || !video) return;
+    if (!canvas || !video || video.readyState !== 4) return;
 
     const ctx = canvas.getContext("2d");
+
+    // Match canvas size to video feed
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Clear previous drawings
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Fix scaling: Ensure bounding boxes match video size
+    const scaleX = canvas.width / 416;  // YOLO processes images at 416x416
+    const scaleY = canvas.height / 416;
+
     detections.forEach((detection) => {
-      const { x, y, width, height, label, confidence } = detection;
+        let { x, y, width, height, label, confidence } = detection;
 
-      // Scale bounding boxes based on the webcam size
-      const scaleX = canvas.width / 416;
-      const scaleY = canvas.height / 416;
+        // Convert YOLO's (center_x, center_y) to (top-left_x, top-left_y)
+        let rectX = (x) * scaleX;
+        let rectY = (y) * scaleY;
+        let rectWidth = width * scaleX;
+        let rectHeight = height * scaleY;
 
-      ctx.strokeStyle = "#00FF00";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(x * scaleX, y * scaleY, width * scaleX, height * scaleY);
+        console.log(`🟩 Drawing Box: x=${rectX}, y=${rectY}, width=${rectWidth}, height=${rectHeight}`);
 
-      ctx.fillStyle = "#00FF00";
-      ctx.font = "16px Arial";
-      ctx.fillText(`${label} (${(confidence * 100).toFixed(2)}%)`, x * scaleX, (y * scaleY) - 5);
+        // Draw bounding box
+        ctx.strokeStyle = "#00FF00";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
+
+        // Draw label
+        ctx.fillStyle = "#00FF00";
+        ctx.font = "16px Arial";
+        ctx.fillText(`${label} (${(confidence * 100).toFixed(2)}%)`, rectX, Math.max(rectY - 5, 10));
     });
   }, [detections]);
 
@@ -98,8 +123,13 @@ function App() {
                   audio={false}
                   screenshotFormat="image/jpeg"
                   className="camera-image"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }} // Fixes pop-out issue
                 />
-                <canvas ref={canvasRef} className="bounding-box-overlay" />
+                <canvas
+                  ref={canvasRef}
+                  className="bounding-box-overlay"
+                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                />
               </>
             ) : (
               <div className="camera-placeholder">Camera Off</div>
