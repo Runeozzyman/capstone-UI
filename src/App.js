@@ -20,7 +20,7 @@ function App() {
     }
   }, [isCameraOn]);
 
-  // Capture an image and send to the backend every 100ms
+  // Capture an image and send to the backend every 50ms
   const captureImage = useCallback(async () => {
     if (!webcamRef.current) return;
 
@@ -52,7 +52,7 @@ function App() {
     if (isCameraOn) {
       interval = setInterval(() => {
         captureImage();
-      }, 50); // Capture every 100ms (0.1s)
+      }, 100); //image capture rate
     }
     return () => clearInterval(interval);
   }, [isCameraOn, captureImage]);
@@ -72,14 +72,11 @@ function App() {
     // Clear previous drawings
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Fix scaling: Ensure bounding boxes match video size
-    const scaleX = canvas.width / 416;  // YOLO processes images at 416x416
+    const scaleX = canvas.width / 416; 
     const scaleY = canvas.height / 416;
 
     detections.forEach((detection) => {
         let { x, y, width, height, label, confidence } = detection;
-
-        // Convert YOLO's (center_x, center_y) to (top-left_x, top-left_y)
         let rectX = (x) * scaleX;
         let rectY = (y) * scaleY;
         let rectWidth = width * scaleX;
@@ -87,12 +84,10 @@ function App() {
 
         console.log(`🟩 Drawing Box: x=${rectX}, y=${rectY}, width=${rectWidth}, height=${rectHeight}`);
 
-        // Draw bounding box
         ctx.strokeStyle = "#00FF00";
         ctx.lineWidth = 2;
         ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
 
-        // Draw label
         ctx.fillStyle = "#00FF00";
         ctx.font = "16px Arial";
         ctx.fillText(`${label} (${(confidence * 100).toFixed(2)}%)`, rectX, Math.max(rectY - 5, 10));
