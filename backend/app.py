@@ -10,7 +10,7 @@ from ultralytics import YOLO
 app = Flask(__name__)
 CORS(app)
 
-MODEL_PATH = "model/best_mv3.pt"
+MODEL_PATH = "model/best.pt"
 
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"❌ Model file not found at {MODEL_PATH}")
