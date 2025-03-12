@@ -28,9 +28,48 @@ html, body {
   width: 100%;
   text-align: center;
   background-color: #68BA7F;
-  position: sticky;
+  position: sticky; /*PAUSEEEEE*/
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   top: 0;
   z-index: 10;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  padding: 15px;
+}
+h3 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin: 0;
+}
+.button-container-header{
+  display: flex;
+  gap: 20px;
+  padding: 0px;
+  margin: 20px;
+}
+
+/* Restart Model Button */
+.model-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #CFFFDC; /* Light grey background */
+  color: #263238;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  font-family: 'Barlow', sans-serif;
+}
+
+.model-button:hover {
+  background-color: #45a049;
 }
 
 /* Content Layout */
@@ -67,16 +106,17 @@ html, body {
   align-items: center;
   justify-content: center;
   width: fit-content;
-  max-width: 640px;
+  min-width: 1280px;
+  
   margin: auto; /* ✅ Ensures it stays centered */
 }
 
-/* Webcam */
+/* Webcam.. why is camera 480px */
 .camera-image {
   width: 100%;
   height: auto;
-  max-width: 640px;
-  max-height: 480px;
+  max-width: 1280px;
+  max-height: 720px;
   border-radius: 10px;
 }
 
@@ -85,15 +125,17 @@ html, body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  margin-top:10px;
+  margin-left:10px;
+  max-width: 1280px;
+  max-height: 720px;
   pointer-events: none;
 }
 
 /* Placeholder when Camera is Off */
 .camera-placeholder {
-  width: 640px;
-  height: 480px;
+  width: 1280px;
+  height: 720px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,16 +153,20 @@ html, body {
   justify-content: center;
 }
 
+
 /* Camera Button */
 .camera-button {
   padding: 8px 16px;
   border: none;
   border-radius: 5px;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #CFFFDC; /* Light grey background */
+  color: #263238;
   cursor: pointer;
   font-size: 1rem;
-  transition: background 0.3s ease;
+  font-weight: 600;
+  transition: background 0.2s ease;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  font-family: 'Barlow', sans-serif;
 }
 
 .camera-button:hover {
@@ -129,50 +175,93 @@ html, body {
 
 .statsBox {
   width: 100%;
+  max-height: 205 px;
+  min-height: 205px;
+  overflow-y: auto;
   background-color: #CFFFDC; /* Light grey background */
   border-radius: 10px;
   padding: 0px;
   text-align: center;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 600;
+  line-height: 0.8;
+  margin-top: 0px;
   color: #263238;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  font-family: 'Barlow', sans-serif;
 }
 
 
 
 /* Right Bar */
 .right-bar {
+  margin-right: 70px;
   width: 100%;
-  max-width: 280px;
+  max-width: 300px;
+  max-height: 765px;
+  min-height: 765px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
   border-radius: 15px;
   background-color: #68BA7F;
-  padding: 15px;
-  gap: 15px;
+  padding: 10px;
+  gap: 10px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+
 }
 
 .right-bar header{
- 
   font-family: 'Barlow', sans-serif;
-  font-size:x-large;
+  width: 280px;
+  text-align: center;
+    font-size:x-large;
   padding-right: 10px;
   padding-left: 10px;
   background-color: #CFFFDC;
   border-radius: 10px;
   font-weight: bold;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  border-bottom: 0px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Right Bar Images */
-.right-bar-image {
-  width: 150px;
-  height: 150px;
-  object-fit: contain;
-  border-radius: 10px;
+
+.icon-container {
+  position: relative;
+  width: 300px; /* Adjust based on your icon size */
+  height: 160px; 
+  margin-top: 10px;
 }
+
+.base-icon, .overlay-icon { /* both icons overlay each other. overlay starts with opacity 0 but thru class, will apply below stylings */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.overlay-icon {
+  opacity: 0; /* Initially hidden */
+  border-radius: 15px;
+  background-color: #CFFFDC;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+
+}
+
+.fade-in {
+  opacity: 1;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
 
 /* Debug Text */
 .debug-text {
