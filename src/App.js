@@ -93,7 +93,7 @@ function App() {
         // Draw bounding box
         ctx.strokeStyle = "#00FF00";
         ctx.lineWidth = 4;
-        ctx.strokeRect(rectX, rectY, rectWidth, rectHeight); //arbitrary value to make the box smaller. i think sth wrong with transform function from app.py 
+        ctx.strokeRect(rectX, rectY, rectWidth, rectHeight); 
 
         // Set the background color for the text
         const textBackgroundColor = "#00FF00"; // Semi-transparent black
