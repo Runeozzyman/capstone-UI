@@ -22,7 +22,7 @@ function App() {
     }
   }, [isCameraOn]);
 
-  // Capture an image and send to the backend every 100ms
+  // Capture an image and send to the backend every 50ms
   const captureImage = useCallback(async () => {
     if (!webcamRef.current) return;
 
@@ -80,9 +80,6 @@ function App() {
 
     detections.forEach((detection) => {
         let { x, y, width, height, label, confidence } = detection;
-
-        
-
 
         // Convert YOLO's (center_x, center_y) to (top-left_x, top-left_y)
         let rectX = (x) * scaleX;
