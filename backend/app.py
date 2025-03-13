@@ -7,6 +7,7 @@ import io
 import os
 from ultralytics import YOLO  
 import cv2
+import gc  # Garbage collection
 
 
 app = Flask(__name__)
@@ -67,7 +68,7 @@ def predict():
         for box in r.boxes:
             x_center, y_center, w, h = box.xywh[0].tolist()
             conf = box.conf[0].item()
-            if conf < 0.6:
+            if conf < 0.5:
                 break
             cls = int(box.cls[0].item())
 
@@ -84,6 +85,8 @@ def predict():
             })
     #print("RIGHT BEFORE RETURN: ", detections)
     print(f"✅ Sending {len(detections)} detections")
+    gc.collect()  # Force garbage collection
+    torch.cuda.empty_cache()  # If using GPU               
     return jsonify({"detections": detections})
 
 if __name__ == "__main__":

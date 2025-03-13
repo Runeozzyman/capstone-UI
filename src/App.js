@@ -133,7 +133,7 @@ function App() {
         <div className="button-container-header">
               <h3>by Austin Wort, Nathan Vu, Hayaan Ahmad, Marcus Uy</h3>
               <button className="camera-button" onClick={toggleCamera}>
-                {isCameraOn ? "oops dont press me yet" : "Restart Model"}
+                {isCameraOn ? "Restart Model" : "Restart Model"}
               </button>
             </div>
       </div>

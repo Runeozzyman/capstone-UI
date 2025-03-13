@@ -3,14 +3,9 @@ from flask_cors import CORS
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-import io
 import os
 from ultralytics import YOLO  
 import gc  # Garbage collection
-import time
-import cv2
-import json
-import numpy
 
 
 #######PROGRAM TO VIEW MODEL RUNNING WITHOUT SENDING TO FRONTEND USING WEBCAM DIRECTLY########
