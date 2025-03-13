@@ -26,7 +26,6 @@ try:
 except Exception as e:
     raise RuntimeError(f"❌ Error loading model: {str(e)}")
 
-
 def display_results(label, conf, x,y,w,h):
     print("==============")
     print("CONFIDENCE: ", conf)    
@@ -35,10 +34,6 @@ def display_results(label, conf, x,y,w,h):
     print("Y: ", y)
     print("W: ", w)
     print("H: ", h)
-
-
-
-
 #results = model(source=0, stream=True)  # generator of Results objects
 #@app.route("/predict", methods=["POST"])
 def predict_nosend(): 

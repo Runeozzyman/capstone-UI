@@ -68,23 +68,34 @@ def predict():
         for box in r.boxes:
             x_center, y_center, w, h = box.xywh[0].tolist()
             conf = box.conf[0].item()
-            if conf < 0.5:
-                break
             cls = int(box.cls[0].item())
+            if conf > 0.5:
+                x = x_center - (w / 2)
+                y = y_center - (h / 2)
 
-            x = x_center - (w / 2)
-            y = y_center - (h / 2)
+                detections.append({
+                    "x": x,  
+                    "y": y,
+                    "width": w,
+                    "height": h,
+                    "label": model.names[cls],  
+                    "confidence": conf,
+                })
+            elif conf > 0.2 and conf <= 0.5:
+                x = x_center - (w / 2)
+                y = y_center - (h / 2)
 
-            detections.append({
-                "x": x,  
-                "y": y,
-                "width": w,
-                "height": h,
-                "label": model.names[cls],  
-                "confidence": conf,
-            })
+                detections.append({
+                    "x": x,  
+                    "y": y,
+                    "width": w,
+                    "height": h,
+                    "label": "GARBAGE",  
+                    "confidence": conf,
+                })
+          
     #print("RIGHT BEFORE RETURN: ", detections)
-    print(f"✅ Sending {len(detections)} detections")
+    print(f"Sending {len(detections)} detections")
     gc.collect()  # Force garbage collection
     torch.cuda.empty_cache()  # If using GPU               
     return jsonify({"detections": detections})
