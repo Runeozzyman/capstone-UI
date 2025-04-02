@@ -9,7 +9,7 @@ function App() {
   const canvasRef = useRef(null);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [detections, setDetections] = useState([]);
-  const [restartModel, setRestartModel] = useState(false); //BOILETPLATE
+  const [isActive, setIsActive] = useState(true); // Boolean state
 
   useEffect(() => {
     if (webcamRef.current && canvasRef.current) {
@@ -54,7 +54,7 @@ function App() {
     if (isCameraOn) {
       interval = setInterval(() => {
         captureImage();
-      }, 100); // Capture every 100ms (0.1s)
+      }, 200); // Capture every 200ms - faster might overload the queue or sth, but perhaps if ur computer is better, u can lower this?
     }
     return () => clearInterval(interval);
   }, [isCameraOn, captureImage]);
@@ -93,11 +93,11 @@ function App() {
         // Draw bounding box
         ctx.strokeStyle = "#00FF00";
         ctx.lineWidth = 4;
-        ctx.strokeRect(rectX, rectY, rectWidth, rectHeight); 
+        ctx.strokeRect(rectX, rectY, rectWidth, rectHeight * 1.17); 
 
         // Set the background color for the text
         const textBackgroundColor = "#00FF00"; // Semi-transparent black
-        const fontSize = 18;
+        const fontSize = 15;
         ctx.font = `${fontSize}px Arial`; // Set the font style
 
         // Calculate text dimensions
@@ -123,18 +123,34 @@ function App() {
   const toggleCamera = () => {
     setIsCameraOn((prev) => !prev);
   };
-  
+
+
+  const restartModel = async () => {
+    try {
+      setIsCameraOn(false);
+      setIsActive(false); // Toggle boolean value
+      alert("Restarting model. Please ensure the camera is off during this process...");
+      setTimeout(() => {
+        setIsActive(true);
+        setIsCameraOn(true);
+      }, 7000);
+      const response = await fetch("http://127.0.0.1:15000/restart-model", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error("Failed to restart model");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="App">
       <div className="header">
         <h1>NG05: Waste Classification System</h1>
        
-        <div className="button-container-header">
+        <div className="sub-header">
               <h3>by Austin Wort, Nathan Vu, Hayaan Ahmad, Marcus Uy</h3>
-              <button className="camera-button" onClick={toggleCamera}>
-                {isCameraOn ? "Restart Model" : "Restart Model"}
-              </button>
             </div>
       </div>
 
@@ -160,8 +176,11 @@ function App() {
               <div className="camera-placeholder">Camera Off</div>
             )}
             <div className="button-container">
-              <button className="camera-button" onClick={toggleCamera}>
+              <button className="camera-button style-camera" onClick={toggleCamera}>
                 {isCameraOn ? "Stop Camera" : "Start Camera"}
+              </button>
+              <button className="camera-button style-restart" onClick={restartModel}>
+                Restart Model
               </button>
             </div>
           </div>
@@ -179,6 +198,7 @@ function App() {
 
           <div className="statsBox">
             <p>Detected Objects: {detections.length}</p>
+            <p className="alert"> {isActive ? "" : "Model is restarting...Please ensure camera remains off for a few seconds..."}</p>
             {detections.map((det, index) => (
               <p key={index}>
                 {det.label} - Confidence: {(det.confidence * 100).toFixed(2)}%
