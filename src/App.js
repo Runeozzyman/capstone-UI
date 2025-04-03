@@ -23,31 +23,34 @@ function App() {
   }, [isCameraOn]);
 
   // Capture an image and send to the backend every 50ms
-  const captureImage = useCallback(async () => {
-    if (!webcamRef.current) return;
+  const isDocker = window.location.hostname !== "localhost";
+const API_URL = isDocker
+  ? "http://backend:15000"
+  : "http://localhost:15000";
 
-    const imageSrc = webcamRef.current.getScreenshot();
-    if (!imageSrc) return;
-    
-    const blob = await fetch(imageSrc).then((res) => res.blob());
-    const formData = new FormData();
-    formData.append("image", blob, "capture.jpg");
+const captureImage = useCallback(async () => {
+  if (!webcamRef.current) return;
+  const imageSrc = webcamRef.current.getScreenshot();
+  if (!imageSrc) return;
 
-    try {
-      const response = await axios.post("http://localhost:15000/predict", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+  const blob = await fetch(imageSrc).then((res) => res.blob());
+  const formData = new FormData();
+  formData.append("image", blob, "capture.jpg");
 
-      if (response.data.detections) {
-        console.log("✅ Detections:", response.data.detections);
-        setDetections(response.data.detections);
-      } else {
-        setDetections([]);
-      }
-    } catch (error) {
-      console.error("❌ Error sending image:", error);
+  try {
+    const response = await axios.post(`${API_URL}/predict`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    if (response.data.detections) {
+      setDetections(response.data.detections);
+    } else {
+      setDetections([]);
     }
-  }, []);
+  } catch (error) {
+    console.error("❌ Error sending image:", error);
+  }
+}, []);
 
   useEffect(() => {
     let interval;
