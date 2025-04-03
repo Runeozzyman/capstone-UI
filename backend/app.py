@@ -42,7 +42,6 @@ def start_model():
 model = start_model()
 model.eval()    
 
-#its ass whatever :3
 def get_frame_from_webcam(camera_index=0): #pull a screenshot/frame from webcam, instead of passing stuff
     cap = cv2.VideoCapture(camera_index)
     if not cap.isOpened():
@@ -93,7 +92,7 @@ def predict():
                 x_center, y_center, w, h = box.xywh[0].tolist()
                 conf = box.conf[0].item()
                 cls = int(box.cls[0].item())
-                if conf > 0.3 and h < 410 and w < 410: #cutoff part for all classifications. 
+                if conf > 0.25 and h < 410 and w < 410: #cutoff part for all classifications. 
                     #also elimnates when model detects entire screen as something (never quite the correct classificication)
                     x = x_center - (w / 2)
                     y = y_center - (h / 2)
