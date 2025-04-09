@@ -15,34 +15,13 @@ app = Flask(__name__)
 CORS(app)
 model = None
 
-MODEL_PATH = "model/best.pt"
+#MODEL_PATH = "model/best.pt"
+MODEL_PATH = "model/best_final3Combined.pt"
+#MODEL_PATH = "model/best_dataset3_40epochs.pt"
+#MODEL_PATH = "model/best_dataset3_20Epochs.pt"
 
 
 
-transform = transforms.Compose([
-    transforms.Resize((416, 416)),  
-    transforms.ToTensor(),
-])
-
-def start_model():
-    global model
-    if not os.path.exists(MODEL_PATH):
-        raise FileNotFoundError(f"❌ Model file not found at {MODEL_PATH}")
-    try:
-        if model is not None:
-            del model
-            print("✅ DELETED PREV MODEL INSTANCE SUCCESFFULY")
-        model = YOLO(MODEL_PATH)  
-        print("✅ ✅ Model loaded successfully!")
-    except Exception as e:
-        raise RuntimeError(f"❌ Error loading model: {str(e)}")
-    model.to("cpu")
-    return model
-    
-model = start_model()
-model.eval()    
-
-#its ass whatever :3
 def get_frame_from_webcam(camera_index=0): #pull a screenshot/frame from webcam, instead of passing stuff
     cap = cv2.VideoCapture(camera_index)
     if not cap.isOpened():
@@ -60,6 +39,28 @@ def get_frame_from_webcam(camera_index=0): #pull a screenshot/frame from webcam,
         return None
 
 
+
+transform = transforms.Compose([
+    transforms.Resize((416, 416)),  
+    transforms.ToTensor(),
+])
+def start_model():
+    global model
+    if not os.path.exists(MODEL_PATH):
+        raise FileNotFoundError(f"❌ Model file not found at {MODEL_PATH}")
+    try:
+        if model is not None:
+            del model
+            print("✅ DELETED PREV MODEL INSTANCE SUCCESFFULY")
+        model = YOLO(MODEL_PATH)  
+        print("✅ ✅ Model loaded successfully!")
+    except Exception as e:
+        raise RuntimeError(f"❌ Error loading model: {str(e)}")
+    model.to("cpu")
+    return model
+model = start_model()
+model.eval()    
+
 @app.route("/restart-model", methods=["POST"])
 def restart_model():
     """Restarts this entire Flask application"""
@@ -76,13 +77,11 @@ def restart_model():
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-    
+
         if "image" not in request.files:
             return jsonify({"error": "No image uploaded"}), 400
         file = request.files["image"]
         img = Image.open(io.BytesIO(file.read())).convert("RGB")  
-        img_tensor = transform(img).unsqueeze(0)  
-
         img_tensor = transform(img).unsqueeze(0)  # Add batch dimension
         global model
         results = model(img_tensor)  
@@ -93,7 +92,7 @@ def predict():
                 x_center, y_center, w, h = box.xywh[0].tolist()
                 conf = box.conf[0].item()
                 cls = int(box.cls[0].item())
-                if conf > 0.3 and h < 410 and w < 410: #cutoff part for all classifications. 
+                if conf > 0.2 and h < 300 and w < 300: #cutoff part for all classifications. 
                     #also elimnates when model detects entire screen as something (never quite the correct classificication)
                     x = x_center - (w / 2)
                     y = y_center - (h / 2)
@@ -107,10 +106,6 @@ def predict():
                         "confidence": conf,
                     })
                     print(f"✅✅ Sending {len(detections)} detections")      
-                # else:
-                #     print(f"Either cuz its detecting the entire screen ({h} x {w}) or the conf is low {conf}, dont send this")
-        #print("RIGHT BEFORE RETURN: ", detections)
-        
         return jsonify({"detections": detections})
     except Exception as e:
         print("Model probably still not ready... please wait a bit...")
