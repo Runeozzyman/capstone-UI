@@ -92,7 +92,7 @@ def predict():
                 x_center, y_center, w, h = box.xywh[0].tolist()
                 conf = box.conf[0].item()
                 cls = int(box.cls[0].item())
-                if conf > 0.2 and h < 300 and w < 300: #cutoff part for all classifications. 
+                if conf > 0.1 and h < 300 and w < 300: #cutoff part for all classifications. 
                     #also elimnates when model detects entire screen as something (never quite the correct classificication)
                     x = x_center - (w / 2)
                     y = y_center - (h / 2)

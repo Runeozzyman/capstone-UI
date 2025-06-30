@@ -16,17 +16,13 @@ function App() {
     const setPreferredCamera = async () => {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter((device) => device.kind === "videoinput");
-      const externalCam = videoDevices.find((device) =>
-        device.label.includes("C920")
-      );
-      if (externalCam) {
-        setSelectedDeviceId(externalCam.deviceId);
-      } else if (videoDevices[0]) {
+      if (videoDevices.length > 0) {
         setSelectedDeviceId(videoDevices[0].deviceId);
       }
     };
     setPreferredCamera();
   }, []);
+  
 
   useEffect(() => {
     if (webcamRef.current && canvasRef.current) {
